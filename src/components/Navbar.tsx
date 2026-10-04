@@ -84,7 +84,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             title="Configure Gemini API Key or use built-in engine"
           >
             <Key className="w-3.5 h-3.5" />
-            <span>{hasCustomKey ? 'Gemini 2.5 Active' : 'AI Engine: Built-in'}</span>
+            <span>{hasCustomKey ? 'Custom Key Active' : 'Gemini 3.8 Flash (Multi-Key)'}</span>
           </button>
 
           {/* GitHub link */}

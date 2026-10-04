@@ -68,20 +68,20 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
           <div className={`p-3 rounded-xl border ${!inputKey ? 'bg-accent-cyan/10 border-accent-cyan/40 text-white' : 'bg-surface-200 border-white/5 text-slate-400'}`}>
             <div className="flex items-center space-x-1.5 font-bold font-mono text-[11px] text-accent-cyan mb-1">
               <Cpu className="w-3.5 h-3.5" />
-              <span>DEFAULT MODE</span>
+              <span>DEFAULT (5-KEY FAILOVER)</span>
             </div>
             <div className="text-[11px] leading-snug">
-              Built-in intelligent cognitive heuristics. Zero setup required, works offline & 100% reliable for judging.
+              Powered by Google Gemini 3.8 Flash with automatic multi-key rotation across 5 dedicated keys.
             </div>
           </div>
 
           <div className={`p-3 rounded-xl border ${inputKey ? 'bg-accent-amber/10 border-accent-amber/40 text-white' : 'bg-surface-200 border-white/5 text-slate-400'}`}>
             <div className="flex items-center space-x-1.5 font-bold font-mono text-[11px] text-accent-amber mb-1">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>GEMINI 2.5 FLASH</span>
+              <span>CUSTOM KEY OVERRIDE</span>
             </div>
             <div className="text-[11px] leading-snug">
-              Direct live inference via Google Gemini 2.5 Flash for arbitrary novel scenarios.
+              Use your personal Gemini API key as the priority endpoint with failover backup.
             </div>
           </div>
         </div>
