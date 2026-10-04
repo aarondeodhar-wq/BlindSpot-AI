@@ -266,6 +266,24 @@ ${report.socraticQuestions.map((q, i) => `${i + 1}. "${q.question}" (Objective: 
         />
 
       </div>
+
+      {/* Mobile Floating Action Dock */}
+      <div className="sm:hidden fixed bottom-4 left-4 right-4 z-40 p-2 rounded-2xl glass-panel border border-white/15 shadow-2xl flex items-center justify-between gap-2">
+        <button
+          onClick={handleCopyDossier}
+          className="flex-1 py-3 px-3 rounded-xl bg-accent-cyan text-void font-bold text-xs flex items-center justify-center space-x-1.5 shadow-md shadow-accent-cyan/20 active:scale-[0.98] transition-transform"
+        >
+          {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+          <span>{copied ? 'Dossier Copied!' : 'Copy Decision Dossier'}</span>
+        </button>
+        <button
+          onClick={onReset}
+          className="py-3 px-4 rounded-xl bg-surface-100 text-slate-200 border border-white/10 text-xs font-semibold flex items-center space-x-1.5 active:scale-[0.98] transition-transform"
+        >
+          <RotateCcw className="w-4 h-4" />
+          <span>New</span>
+        </button>
+      </div>
     </section>
   );
 };

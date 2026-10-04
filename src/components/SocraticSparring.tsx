@@ -60,7 +60,7 @@ export const SocraticSparring: React.FC<SocraticSparringProps> = ({ questions, c
       </div>
 
       {/* Question Selector Tabs */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-6">
+      <div className="flex sm:grid sm:grid-cols-4 gap-2.5 mt-6 overflow-x-auto pb-2 sm:pb-0 scrollbar-none snap-x">
         {questions.map((q, idx) => {
           const isAnswered = !!reflections[q.id];
           const isSelected = activeQuestionId === q.id;
@@ -68,7 +68,7 @@ export const SocraticSparring: React.FC<SocraticSparringProps> = ({ questions, c
             <button
               key={q.id}
               onClick={() => setActiveQuestionId(q.id)}
-              className={`p-3 rounded-xl text-left border text-xs font-medium transition-all flex items-start justify-between ${
+              className={`p-3.5 rounded-xl text-left border text-xs font-medium transition-all flex items-start justify-between min-w-[220px] sm:min-w-0 snap-start shrink-0 sm:shrink ${
                 isSelected
                   ? 'bg-accent-violet/20 border-accent-violet text-white shadow-md'
                   : 'bg-surface-100/60 border-white/5 hover:border-white/20 text-slate-300'

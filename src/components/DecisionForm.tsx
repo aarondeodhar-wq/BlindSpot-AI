@@ -82,13 +82,13 @@ export const DecisionForm: React.FC<DecisionFormProps> = ({
             </span>
             <span className="text-[11px] text-slate-500">1-Click Auto-Fill</span>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <div className="flex sm:grid sm:grid-cols-3 gap-2.5 overflow-x-auto pb-2 sm:pb-0 scrollbar-none snap-x">
             {PRESET_SCENARIOS.map((preset) => (
               <button
                 key={preset.id}
                 type="button"
                 onClick={() => handleLoadPreset(preset.id)}
-                className={`text-left p-3 rounded-xl border text-xs font-medium transition-all ${
+                className={`text-left p-3.5 rounded-xl border text-xs font-medium transition-all min-w-[240px] sm:min-w-0 snap-start shrink-0 sm:shrink ${
                   selectedPresetId === preset.id
                     ? 'bg-accent-cyan/10 border-accent-cyan text-white shadow-sm'
                     : 'bg-surface-50/70 border-white/5 hover:border-white/20 text-slate-300 hover:text-white'
