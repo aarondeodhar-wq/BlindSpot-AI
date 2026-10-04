@@ -55,6 +55,8 @@ export interface BlindSpotReport {
   neutralityPledge: string;
   overallBlindspotScore: number; // 0 to 100
   summaryInsight: string;
+  sourceModel?: string;
+  isLiveAI?: boolean;
   unstatedAssumptions: AssumptionItem[];
   overlookedBlindSpots: BlindSpotItem[];
   shadowTradeOffs: TradeOffItem[];

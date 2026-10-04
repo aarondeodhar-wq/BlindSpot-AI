@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { TrustBar } from './components/TrustBar';
@@ -18,6 +18,39 @@ export const App: React.FC = () => {
   const [selectedPresetId, setSelectedPresetId] = useState<string>('internship-vs-college');
   const [apiKeyModalOpen, setApiKeyModalOpen] = useState<boolean>(false);
   const [guideModalOpen, setGuideModalOpen] = useState<boolean>(false);
+
+  // macOS / iOS Day & Night Theme state
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('blindspot-theme');
+      if (saved === 'dark' || saved === 'light') return saved;
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        return 'light';
+      }
+    }
+    return 'dark';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+      root.classList.remove('light');
+    } else {
+      root.classList.remove('dark');
+      root.classList.add('light');
+    }
+    localStorage.setItem('blindspot-theme', theme);
+
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) {
+      metaTheme.setAttribute('content', theme === 'dark' ? '#07090E' : '#F8FAFC');
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   const handleStartAuditScroll = () => {
     const el = document.getElementById('intake-studio');
@@ -76,7 +109,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-void text-slate-100 flex flex-col font-sans selection:bg-accent-cyan/30 selection:text-white">
+    <div className="min-h-screen bg-slate-50 dark:bg-void text-slate-900 dark:text-slate-100 flex flex-col font-sans selection:bg-accent-cyan/30 selection:text-slate-900 dark:selection:text-white transition-colors duration-300">
       {/* Accessible Skip to content */}
       <a
         href="#intake-studio"
@@ -94,6 +127,8 @@ export const App: React.FC = () => {
           handleLoadChallengeExample();
         }}
         onOpenGuide={() => setGuideModalOpen(true)}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
 
       <main className="flex-1">

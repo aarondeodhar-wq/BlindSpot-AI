@@ -19,7 +19,14 @@ function getPoolKeys(): string[] {
   return ENCODED_POOL.map((k) => atob(k));
 }
 
-const MODEL_NAME = 'gemini-3.8-flash';
+const CANDIDATE_MODELS = [
+  'gemini-3.5-flash',
+  'gemini-3.6-flash',
+  'gemini-3.5-flash-lite',
+  'gemini-flash-lite-latest',
+  'gemini-3.8-flash',
+  'gemini-3.7-flash',
+];
 
 const SYSTEM_PROMPT = `You are "THE BLIND SPOT", an elite cognitive sparring partner and decision auditor based on behavioral economics, systems thinking, and epistemic rationality.
 
@@ -27,7 +34,7 @@ CRITICAL PRIME DIRECTIVE:
 1. YOU MUST NEVER DECIDE FOR THE USER.
 2. DO NOT say "you should do this", "accept this", "reject this", or "the optimal choice is".
 3. Your sole mission is to expand their field of view: uncover what they are NOT seeing, what unstated assumptions they treat as fact, what second-order domino effects lurk in the shadows, and what cognitive biases are skewing their evaluation.
-4. Ground your analysis strictly in the specific details provided by the user. Do not invent details not present or implied.
+4. Ground your analysis directly in the decision provided by the user. If they provide a brief title like "school or no school", analyze the authentic tensions, opportunity costs, and trade-offs of that exact domain.
 5. Output MUST be valid strictly formatted JSON matching the requested schema.`;
 
 export async function analyzeDecisionWithAI(
@@ -40,34 +47,47 @@ export async function analyzeDecisionWithAI(
   }
   keysToTry.push(...getPoolKeys());
 
-  // Attempt live Gemini inference with automatic key failover
-  for (let i = 0; i < keysToTry.length; i++) {
-    const key = keysToTry[i];
-    try {
-      return await callGeminiAPI(input, key);
-    } catch (err: any) {
-      console.warn(`Key #${i + 1} failed (${err.message}). Trying next key in pool...`);
+  // Attempt live Gemini inference with automatic model and key cascade
+  for (const model of CANDIDATE_MODELS) {
+    for (let i = 0; i < keysToTry.length; i++) {
+      const key = keysToTry[i];
+      try {
+        const report = await callGeminiAPI(input, key, model);
+        console.log(`[The Blind Spot] Live inference succeeded with model: ${model}`);
+        return report;
+      } catch (err: any) {
+        console.warn(`[The Blind Spot] Model ${model} on key #${i + 1} failed (${err.message}). Trying next...`);
+      }
     }
   }
 
-  // Graceful fallback to dynamic epistemic synthesizer if network or all keys fail
-  console.warn('All Gemini API keys exhausted or rate-limited. Falling back to dynamic epistemic engine.');
+  // Graceful fallback to dynamic epistemic synthesizer if all models and keys fail
+  console.warn('All Gemini models and keys exhausted or rate-limited. Falling back to dynamic epistemic engine.');
   return generateDynamicReport(input);
 }
 
-async function callGeminiAPI(input: DecisionInput, key: string): Promise<BlindSpotReport> {
+async function callGeminiAPI(input: DecisionInput, key: string, model: string): Promise<BlindSpotReport> {
+  const title = input.title.trim();
+  const rationale = (input.rationale && input.rationale.trim().length > 0)
+    ? input.rationale.trim()
+    : `Evaluating whether to choose or decline "${title}", weighing perceived immediate upside vs alternate pathways.`;
+  const context = (input.context && input.context.trim().length > 0)
+    ? input.context.trim()
+    : `Decision space for "${title}", including time investment, opportunity cost, long-term compounding, and real-world friction.`;
+  const hesitations = input.hesitations?.trim() || 'Intuitive uncertainty about long-term regret, trade-offs, and sustainability.';
+
   const prompt = `Analyze this decision through the Blind Spot framework.
 
-DECISION TITLE: ${input.title}
+DECISION TITLE: ${title}
 CATEGORY: ${input.category}
 VISIBLE RATIONALE (What they are focusing on):
-${input.rationale}
+${rationale}
 
 CONTEXT & CONSTRAINTS:
-${input.context}
+${context}
 
 INTUITIVE HESITATIONS / DOUBTS:
-${input.hesitations || 'None stated explicitly by the user.'}
+${hesitations}
 
 Return a pure JSON object with this exact schema:
 {
@@ -130,7 +150,7 @@ Return a pure JSON object with this exact schema:
 }`;
 
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${key}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,
     {
       method: 'POST',
       headers: {
@@ -144,7 +164,7 @@ Return a pure JSON object with this exact schema:
           },
         ],
         generationConfig: {
-          temperature: 0.3,
+          temperature: 0.35,
           responseMimeType: 'application/json',
         },
       }),
@@ -152,12 +172,20 @@ Return a pure JSON object with this exact schema:
   );
 
   if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+    const errText = await response.text();
+    throw new Error(`HTTP ${response.status}: ${errText}`);
   }
 
   const result = await response.json();
-  const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+  let text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) throw new Error('Empty response from AI model');
+
+  text = text.trim();
+  if (text.startsWith('```json')) {
+    text = text.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+  } else if (text.startsWith('```')) {
+    text = text.replace(/^```\s*/, '').replace(/\s*```$/, '');
+  }
 
   const parsed = JSON.parse(text);
 
@@ -165,25 +193,45 @@ Return a pure JSON object with this exact schema:
     id: 'report-' + Date.now(),
     createdAt: new Date().toISOString(),
     decisionTitle: input.title,
+    sourceModel: model,
+    isLiveAI: true,
     neutralityPledge:
       'The Blind Spot does not recommend whether to choose or decline this path. Our mandate is solely to illuminate blind spots, stress-test your premises, and help you reach your own reasoned conviction.',
-    overallBlindspotScore: parsed.overallBlindspotScore || 78,
-    summaryInsight: parsed.summaryInsight,
+    overallBlindspotScore: typeof parsed.overallBlindspotScore === 'number' ? parsed.overallBlindspotScore : 78,
+    summaryInsight: parsed.summaryInsight || 'Cognitive audit completed across unstated assumptions and downstream risk horizons.',
     unstatedAssumptions: (parsed.unstatedAssumptions || []).map((a: any, i: number) => ({
-      ...a,
       id: `a-${i + 1}`,
+      premise: typeof a === 'string' ? a : (a.premise || 'Unstated premise'),
+      whyFragile: a.whyFragile || 'Treats an unverified contingency as guaranteed fact under pressure.',
       severity: a.severity || 'high',
+      verificationStep: a.verificationStep || 'Conduct a 48-hour pilot audit or obtain written verification.',
     })),
     overlookedBlindSpots: (parsed.overlookedBlindSpots || []).map((b: any, i: number) => ({
-      ...b,
       id: `b-${i + 1}`,
+      factor: typeof b === 'string' ? b : (b.factor || 'Structural Factor'),
+      explanation: b.explanation || 'Omitted from current reasoning, altering the true risk profile.',
+      category: b.category || 'Opportunity Cost',
     })),
-    shadowTradeOffs: parsed.shadowTradeOffs || [],
-    dominoEffects: parsed.dominoEffects || [],
-    detectedBiases: parsed.detectedBiases || [],
+    shadowTradeOffs: (parsed.shadowTradeOffs || []).map((t: any) => ({
+      gained: t.gained || 'Visible immediate gain',
+      sacrificed: t.sacrificed || 'Compounding long-term alternative',
+      asymmetryScore: t.asymmetryScore || 'Asymmetric Downside vs Short-Term Upside',
+    })),
+    dominoEffects: (parsed.dominoEffects || []).map((d: any) => ({
+      horizon: d.horizon || '1-2 Years',
+      visibleExpectation: d.visibleExpectation || 'Assumed trajectory',
+      shadowRisk: d.shadowRisk || 'Compounding friction or path dependency',
+    })),
+    detectedBiases: (parsed.detectedBiases || []).map((cb: any) => ({
+      name: cb.name || 'Present Bias',
+      description: cb.description || 'Overvaluing near-term certainty while discounting future compounding.',
+      evidenceFromInput: cb.evidenceFromInput || 'Derived from core decision rationale.',
+      antidote: cb.antidote || 'Perform a 3-year inversion test before committing.',
+    })),
     socraticQuestions: (parsed.socraticQuestions || []).map((q: any, i: number) => ({
-      ...q,
       id: `q-${i + 1}`,
+      question: typeof q === 'string' ? q : (q.question || 'What is the failure mode you are most reluctant to contemplate?'),
+      intent: q.intent || 'Stress-tests conviction under adverse conditions.',
     })),
   };
 }
@@ -371,21 +419,22 @@ export async function sparOnQuestion(
   }
   keysToTry.push(...getPoolKeys());
 
-  for (let i = 0; i < keysToTry.length; i++) {
-    const key = keysToTry[i];
-    try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${key}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [
-              {
-                role: 'user',
-                parts: [
-                  {
-                    text: `You are "THE BLIND SPOT" cognitive sparring partner.
+  for (const model of CANDIDATE_MODELS) {
+    for (let i = 0; i < keysToTry.length; i++) {
+      const key = keysToTry[i];
+      try {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [
+                {
+                  role: 'user',
+                  parts: [
+                    {
+                      text: `You are "THE BLIND SPOT" cognitive sparring partner.
 SOCRATIC QUESTION: "${question.question}"
 USER'S ANSWER: "${userAnswer}"
 
@@ -394,21 +443,22 @@ Instead, act as a Socratic sparring mirror:
 1. Reflect the core tension in their answer.
 2. Probe one deeper unexamined vulnerability or question what new assumption their answer introduces.
 3. Keep it punchy (3-4 sentences max).`,
-                  },
-                ],
-              },
-            ],
-            generationConfig: { temperature: 0.4 },
-          }),
+                    },
+                  ],
+                },
+              ],
+              generationConfig: { temperature: 0.4 },
+            }),
+          }
+        );
+        if (response.ok) {
+          const resJson = await response.json();
+          const text = resJson?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) return text.trim();
         }
-      );
-      if (response.ok) {
-        const resJson = await response.json();
-        const text = resJson?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (text) return text.trim();
+      } catch (e: any) {
+        // Continue to next option
       }
-    } catch (e: any) {
-      console.warn(`Sparring key #${i + 1} failed: ${e.message}`);
     }
   }
 

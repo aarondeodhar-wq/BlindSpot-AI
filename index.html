@@ -3,28 +3,67 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%2307090E' stroke='%2300F0FF' stroke-width='6'/><circle cx='50' cy='50' r='18' fill='%23F43F5E'/><circle cx='50' cy='50' r='6' fill='%23FFFFFF'/></svg>" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%2307090E' stroke='%2300F0FF' stroke-width='6'/><circle cx='50' cy='50' r='18' fill='%23F43F5E'/><circle cx='50' cy='50' r='6' fill='%23FFFFFF'/></svg>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="The Blind Spot" />
+    <meta name="format-detection" content="telephone=no" />
     
-    <!-- Primary Meta Tags -->
-    <title>THE BLIND SPOT // Cognitive Sparring Partner & Decision Auditor</title>
-    <meta name="title" content="THE BLIND SPOT // Cognitive Sparring Partner & Decision Auditor" />
+    <!-- Primary SEO Meta Tags -->
+    <title>THE BLIND SPOT // AI Cognitive Sparring Partner & Decision Auditor</title>
+    <meta name="title" content="THE BLIND SPOT // AI Cognitive Sparring Partner & Decision Auditor" />
     <meta name="description" content="An AI-powered cognitive sparring system designed to detect unstated assumptions, hidden trade-offs, and critical blind spots in high-stakes reasoning without prescribing the outcome." />
-    <meta name="keywords" content="decision making, cognitive bias, critical thinking, AI sparring, assumption tester, blind spots, mental models" />
-    <meta name="author" content="The Blind Spot Architecture" />
+    <meta name="keywords" content="decision making, cognitive bias, critical thinking, AI sparring, assumption tester, blind spots, mental models, epistemic rationality, Daniel Kahneman, Charlie Munger" />
+    <meta name="author" content="Aaron Deodhar // The Blind Spot Project" />
+    <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#07090E" />
 
-    <!-- Open Graph / Social Proof -->
+    <!-- Open Graph / Facebook / LinkedIn -->
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://blindspot-app-two.vercel.app/" />
     <meta property="og:title" content="The Blind Spot — Illuminate What You Cannot See" />
-    <meta property="og:description" content="Challenge your reasoning before locking in major decisions. Identifies unstated assumptions and second-order impacts without deciding for you." />
-    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="og:description" content="Challenge your reasoning before locking in major decisions. Identifies unstated assumptions, domino cascades, and shadow trade-offs without deciding for you." />
+    <meta property="og:site_name" content="The Blind Spot AI" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://blindspot-app-two.vercel.app/" />
+    <meta name="twitter:title" content="The Blind Spot — AI Cognitive Sparring Partner" />
+    <meta name="twitter:description" content="Pressure-test high-stakes choices against behavioral economics and second-order systems dynamics." />
+
+    <!-- Schema.org JSON-LD Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "The Blind Spot",
+      "url": "https://blindspot-app-two.vercel.app/",
+      "description": "An AI-powered cognitive sparring partner and decision auditor based on behavioral economics and systems thinking.",
+      "applicationCategory": "ProductivityApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Unstated Assumption Audit",
+        "Structural Blind Spot Detection",
+        "Shadow Trade-Off Ledger",
+        "Multi-Horizon Domino Effects Simulation",
+        "Cognitive Bias Analysis & Antidotes",
+        "Interactive Socratic Sparring Arena"
+      ]
+    }
+    </script>
 
     <!-- Google Fonts: Fraunces (Luxury Editorial Serif), Outfit (Modern Geometric Sans), Space Mono (Technical) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   </head>
-  <body class="bg-void text-slate-100 antialiased selection:bg-accent-cyan/30 selection:text-white min-h-screen overflow-x-hidden font-sans">
+  <body class="bg-slate-50 dark:bg-void text-slate-900 dark:text-slate-100 antialiased selection:bg-accent-cyan/30 selection:text-slate-900 dark:selection:text-white min-h-screen overflow-x-hidden font-sans">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

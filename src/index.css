@@ -4,7 +4,15 @@
 
 @layer base {
   :root {
+    --bg-primary: #F8FAFC;
+    --text-primary: #0F172A;
+    --border-subtle: rgba(0, 0, 0, 0.08);
+    --border-highlight: rgba(0, 113, 227, 0.35);
+  }
+
+  .dark {
     --bg-primary: #07090E;
+    --text-primary: #F1F5F9;
     --border-subtle: rgba(255, 255, 255, 0.08);
     --border-highlight: rgba(0, 240, 255, 0.35);
   }
@@ -15,15 +23,16 @@
   }
 
   body {
-    background-color: #07090E;
-    color: #F1F5F9;
-    font-family: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Outfit', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     min-height: 100vh;
     min-height: -webkit-fill-available;
     overflow-x: hidden;
+    transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  /* Prevent iOS Safari from auto-zooming into inputs when focused */
+  /* Prevent iOS Safari auto-zoom on inputs */
   @media screen and (max-width: 768px) {
     input, textarea, select {
       font-size: 16px !important;
@@ -32,47 +41,76 @@
 
   /* Custom scrollbar */
   ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+    width: 6px;
+    height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #07090E;
+    background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #1E293B;
+    background: #CBD5E1;
     border-radius: 9999px;
   }
+  .dark ::-webkit-scrollbar-thumb {
+    background: #1E293B;
+  }
   ::-webkit-scrollbar-thumb:hover {
+    background: #94A3B8;
+  }
+  .dark ::-webkit-scrollbar-thumb:hover {
     background: #334155;
   }
 }
 
-/* Glassmorphism primitives */
+/* Glassmorphism primitives (macOS / iOS Vibrancy) */
 .glass-panel {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04), 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.dark .glass-panel {
   background: rgba(14, 17, 27, 0.82);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.5);
 }
 
 .glass-panel-hover {
   transition: all 280ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 .glass-panel-hover:hover {
-  border-color: rgba(0, 240, 255, 0.4);
+  border-color: rgba(0, 113, 227, 0.4);
   transform: translateY(-2px);
+  box-shadow: 0 16px 36px -10px rgba(0, 113, 227, 0.12);
+}
+.dark .glass-panel-hover:hover {
+  border-color: rgba(0, 240, 255, 0.4);
   box-shadow: 0 16px 36px -12px rgba(0, 240, 255, 0.12);
 }
 
 .glass-nav {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.dark .glass-nav {
   background: rgba(7, 9, 14, 0.88);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Radiant glow effects */
 .radial-mesh {
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(0, 113, 227, 0.06) 0px, transparent 55%),
+    radial-gradient(at 100% 10%, rgba(139, 92, 246, 0.06) 0px, transparent 55%),
+    radial-gradient(at 50% 90%, rgba(244, 63, 94, 0.04) 0px, transparent 60%);
+}
+
+.dark .radial-mesh {
   background-image: 
     radial-gradient(at 0% 0%, rgba(0, 240, 255, 0.12) 0px, transparent 55%),
     radial-gradient(at 100% 10%, rgba(139, 92, 246, 0.12) 0px, transparent 55%),
@@ -89,6 +127,52 @@
 
 .glow-rose {
   box-shadow: 0 0 35px -5px rgba(244, 63, 94, 0.35);
+}
+
+/* macOS Window Traffic Lights */
+.traffic-lights {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.traffic-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 9999px;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;
+  cursor: pointer;
+}
+
+.traffic-dot:hover {
+  transform: scale(1.15);
+}
+
+.traffic-red {
+  background-color: #FF5F56;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.traffic-yellow {
+  background-color: #FFBD2E;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.traffic-green {
+  background-color: #27C93F;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+/* Apple iOS Segmented Control & Springs */
+.segmented-control {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  padding: 3px;
+  display: inline-flex;
+}
+
+.dark .segmented-control {
+  background: rgba(255, 255, 255, 0.06);
 }
 
 /* Mobile bottom safe area padding helper */
