@@ -121,8 +121,8 @@ npx netlify deploy --prod --dir=dist
 
 ## 📝 Submission Summary (For Hackathon Judges)
 
-- **Application Name:** THE BLIND SPOT
-- **Live URL:** `[Your Deployed URL]`
-- **Repository:** `[Your GitHub Repository URL]`
+- **Application Name:** THE BLIND SPOT (BlindSpot AI)
+- **Live URL:** [https://blindspot-app-two.vercel.app](https://blindspot-app-two.vercel.app)
+- **Repository:** [https://github.com/aarondeodhar-wq/BlindSpot-AI](https://github.com/aarondeodhar-wq/BlindSpot-AI)
 - **Brief Description:**
   The Blind Spot is an AI-powered cognitive sparring partner that audits critical decisions without making the choice for the user. Grounded in behavioral economics and systems thinking, it inverts the user's stated rationale to uncover unstated assumptions, overlooked externalities, shadow trade-offs, multi-horizon second-order domino effects, and active cognitive biases. Features an interactive Socratic sparring arena where users can challenge and refine their own conviction before committing to irreversible choices.
