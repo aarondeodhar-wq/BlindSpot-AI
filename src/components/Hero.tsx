@@ -24,10 +24,10 @@ export const Hero: React.FC<HeroProps> = ({ onStartAudit, onLoadChallengeExample
           <span className="text-accent-cyan">We Audit What You Overlooked</span>
         </div>
 
-        {/* High-Contrast Bold Headline */}
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-extrabold tracking-tight text-white max-w-4xl mx-auto leading-[1.1]">
-          What You Aren’t Seeing <br className="hidden sm:inline" />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-cyan via-white to-accent-violet">
+        {/* High-Contrast Bold Editorial Headline */}
+        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-extrabold tracking-tight text-white max-w-4xl mx-auto leading-[1.15]">
+          What You <span className="italic font-normal text-accent-cyan/90">Aren’t Seeing</span> <br className="hidden sm:inline" />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-slate-400">
             Matters More Than What You Are.
           </span>
         </h1>
