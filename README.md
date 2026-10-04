@@ -49,8 +49,7 @@ Build an AI-powered solution that helps users identify potential **blind spots**
 ## 🚀 Live Demo & Key Capabilities
 
 - **Strict Non-Prescriptive Contract:** Zero advice like "accept this" or "reject this". Refuses to decide for the user.
-- **Direct Alignment with Prompt Example:** Includes a 1-click preset for the exact hackathon brief:
-  * *Student deciding whether to accept a 6-month internship ($2,500/mo stipend, 15 min from home, 40 hrs/week, while balancing 4 engineering subjects and 75% attendance policy).*
+- **Realistic Sample Scenarios:** Includes 1-click presets covering complex dilemmas such as evaluating a full-time internship offer during a demanding university semester.
 - **Verification Protocols:** Each unstated assumption includes a concrete action step (e.g., questions to ask recruiters before signing).
 - **Asymmetric Bento Grid Dashboard:** Dark mode editorial visual layout built with fluid clamp spacing and WCAG 2.1 AA accessible contrast.
 - **Interactive Socratic Sparring Arena:** Users can type defenses to the AI's stress-test questions and receive immediate counter-reflections.
@@ -119,7 +118,7 @@ npx netlify deploy --prod --dir=dist
 
 ---
 
-## 📝 Submission Summary (For Hackathon Judges)
+## 📝 Project Summary & Live Deployment
 
 - **Application Name:** THE BLIND SPOT (BlindSpot AI)
 - **Live URL:** [https://blindspot-app-two.vercel.app](https://blindspot-app-two.vercel.app)

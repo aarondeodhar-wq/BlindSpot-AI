@@ -15,7 +15,7 @@ export const App: React.FC = () => {
   const [report, setReport] = useState<BlindSpotReport | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [customApiKey, setCustomApiKey] = useState<string>('');
-  const [selectedPresetId, setSelectedPresetId] = useState<string>('internship-challenge-prompt');
+  const [selectedPresetId, setSelectedPresetId] = useState<string>('internship-vs-college');
   const [apiKeyModalOpen, setApiKeyModalOpen] = useState<boolean>(false);
   const [guideModalOpen, setGuideModalOpen] = useState<boolean>(false);
 
@@ -53,8 +53,8 @@ export const App: React.FC = () => {
   };
 
   const handleLoadChallengeExample = async () => {
-    setSelectedPresetId('internship-challenge-prompt');
-    const preset = PRESET_SCENARIOS.find((p) => p.id === 'internship-challenge-prompt');
+    setSelectedPresetId('internship-vs-college');
+    const preset = PRESET_SCENARIOS.find((p) => p.id === 'internship-vs-college');
     if (preset) {
       if (preset.mockReport) {
         setReport(preset.mockReport);

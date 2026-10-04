@@ -76,14 +76,14 @@ export const Footer: React.FC<FooterProps> = ({ onOpenGuide }) => {
             </ul>
           </div>
 
-          {/* Column 4: Submission & Compliance */}
+          {/* Column 4: System Architecture */}
           <div className="space-y-2">
             <div className="font-mono text-white text-xs uppercase tracking-wider font-semibold">
-              Hackathon Specification
+              Cognitive Architecture
             </div>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Engineered under strict 3-hour constraint for "The Blind Spot" challenge. 
-              Demonstrates meaningful AI usage with non-prescriptive reasoning constraints.
+              Autonomous epistemic reasoning system built with zero prescriptive bias, 
+              strict Socratic questioning, and multi-horizon cascade simulation.
             </p>
             <div className="pt-1 flex items-center space-x-3">
               <a

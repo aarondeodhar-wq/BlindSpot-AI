@@ -56,7 +56,7 @@ export const Hero: React.FC<HeroProps> = ({ onStartAudit, onLoadChallengeExample
             className="w-full sm:w-auto px-7 py-4 rounded-xl bg-surface-100 hover:bg-surface-50 text-slate-200 hover:text-white font-medium text-base border border-white/10 hover:border-accent-cyan/40 flex items-center justify-center space-x-2.5 transition-all duration-200"
           >
             <Sparkles className="w-4 h-4 text-accent-cyan" />
-            <span>Load Prompt Case (Internship vs College)</span>
+            <span>Explore Sample Scenario</span>
           </button>
         </div>
 

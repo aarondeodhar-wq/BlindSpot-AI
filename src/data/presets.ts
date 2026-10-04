@@ -2,8 +2,8 @@ import type { PresetScenario } from '../types';
 
 export const PRESET_SCENARIOS: PresetScenario[] = [
   {
-    id: 'internship-challenge-prompt',
-    name: '6-Month Internship vs College (Prompt Example)',
+    id: 'internship-vs-college',
+    name: 'Full-Time Internship vs Final College Semester',
     tag: 'Academic & Career',
     icon: 'GraduationCap',
     data: {

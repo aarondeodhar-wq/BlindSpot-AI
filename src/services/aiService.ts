@@ -6,7 +6,8 @@ CRITICAL PRIME DIRECTIVE:
 1. YOU MUST NEVER DECIDE FOR THE USER.
 2. DO NOT say "you should do this", "accept this", "reject this", or "the optimal choice is".
 3. Your sole mission is to expand their field of view: uncover what they are NOT seeing, what unstated assumptions they treat as fact, what second-order domino effects lurk in the shadows, and what cognitive biases are skewing their evaluation.
-4. Output MUST be valid strictly formatted JSON matching the requested schema.`;
+4. Ground your analysis strictly in the specific details provided by the user. Do not invent details not present or implied.
+5. Output MUST be valid strictly formatted JSON matching the requested schema.`;
 
 export async function analyzeDecisionWithAI(
   input: DecisionInput,
@@ -18,13 +19,13 @@ export async function analyzeDecisionWithAI(
     try {
       return await callGeminiAPI(input, activeKey.trim());
     } catch (err) {
-      console.warn('Gemini API call failed, falling back to cognitive reasoning engine:', err);
-      return generateHeuristicReport(input);
+      console.warn('Gemini API call failed, falling back to dynamic epistemic engine:', err);
+      return generateDynamicReport(input);
     }
   }
 
-  // Fallback to high-fidelity cognitive heuristic engine
-  return generateHeuristicReport(input);
+  // Fallback to high-fidelity dynamic epistemic engine
+  return generateDynamicReport(input);
 }
 
 async function callGeminiAPI(input: DecisionInput, key: string): Promise<BlindSpotReport> {
@@ -41,64 +42,64 @@ ${input.context}
 INTUITIVE HESITATIONS / DOUBTS:
 ${input.hesitations || 'None stated explicitly by the user.'}
 
-Return a pure JSON object (no markdown code fences if possible, or markdown json fence) with this exact schema:
+Return a pure JSON object with this exact schema:
 {
-  "summaryInsight": "A sharp, 2-sentence metacognitive diagnostic of their thinking posture.",
-  "overallBlindspotScore": 82, // number between 60 and 95 representing vulnerability to blind spots
+  "summaryInsight": "A sharp, 2-sentence metacognitive diagnostic of their thinking posture directly referencing their inputs.",
+  "overallBlindspotScore": 78,
   "unstatedAssumptions": [
     {
-      "premise": "The specific unspoken belief they treat as true",
-      "whyFragile": "Why this belief may break or fail under stress",
-      "severity": "high", // "high" | "medium" | "low"
-      "verificationStep": "A concrete action or question to verify this premise before deciding"
+      "premise": "The specific unspoken belief they treat as true without verification",
+      "whyFragile": "Why this belief may break or fail under real-world pressure",
+      "severity": "high",
+      "verificationStep": "A concrete question or action to test this premise before committing"
     }
-  ], // exactly 3 items
+  ],
   "overlookedBlindSpots": [
     {
-      "factor": "Name of overlooked structural factor",
-      "explanation": "Why this ignored dimension matters deeply",
-      "category": "Academic" // choose from "Academic" | "Financial" | "Mentorship" | "Career Trajectory" | "Health/Social" | "Opportunity Cost"
+      "factor": "Name of structural factor completely omitted or downplayed in their reasoning",
+      "explanation": "Why this ignored dimension alters the risk profile",
+      "category": "Opportunity Cost"
     }
-  ], // exactly 3 items
+  ],
   "shadowTradeOffs": [
     {
-      "gained": "What is visibly gained",
+      "gained": "What is visibly gained according to their rationale",
       "sacrificed": "What is silently sacrificed or put at risk",
-      "asymmetryScore": "e.g. Asymmetric Downside vs Short-Term Liquidity"
+      "asymmetryScore": "e.g. Asymmetric Downside vs Short-Term Upside"
     }
-  ], // exactly 2 items
+  ],
   "dominoEffects": [
     {
       "horizon": "3-6 Months",
-      "visibleExpectation": "What they think happens",
-      "shadowRisk": "The hidden friction or compounding debt"
+      "visibleExpectation": "What they assume happens near-term",
+      "shadowRisk": "The hidden friction or compounding debt that emerges"
     },
     {
       "horizon": "1-2 Years",
-      "visibleExpectation": "What they think happens",
-      "shadowRisk": "The hidden friction or compounding debt"
+      "visibleExpectation": "What they assume happens mid-term",
+      "shadowRisk": "The downstream path dependency created"
     },
     {
       "horizon": "3-5 Years",
-      "visibleExpectation": "What they think happens",
-      "shadowRisk": "The hidden friction or compounding debt"
+      "visibleExpectation": "What they assume happens long-term",
+      "shadowRisk": "The compounded structural outcome"
     }
   ],
   "detectedBiases": [
     {
-      "name": "Cognitive Bias Name (e.g. Present Bias, Proximity Heuristic, Sunk Cost)",
+      "name": "Cognitive Bias Name",
       "description": "Definition of the bias",
-      "evidenceFromInput": "Direct quote or indicator from user's words",
+      "evidenceFromInput": "Direct evidence from user's words",
       "antidote": "A sharp mental reframing technique"
     }
-  ], // 2-3 items
+  ],
   "socraticQuestions": [
     {
       "id": "q1",
-      "question": "Probing, provocative question designed to stress-test their assumptions",
+      "question": "Probing, provocative question designed to stress-test their premises",
       "intent": "The psychological or strategic purpose of this question"
     }
-  ] // exactly 4 items
+  ]
 }`;
 
   const response = await fetch(
@@ -138,7 +139,7 @@ Return a pure JSON object (no markdown code fences if possible, or markdown json
     createdAt: new Date().toISOString(),
     decisionTitle: input.title,
     neutralityPledge:
-      'The Blind Spot does not recommend whether to accept or decline. Our mandate is solely to illuminate blind spots, stress-test your premises, and help you reach your own reasoned conviction.',
+      'The Blind Spot does not recommend whether to choose or decline this path. Our mandate is solely to illuminate blind spots, stress-test your premises, and help you reach your own reasoned conviction.',
     overallBlindspotScore: parsed.overallBlindspotScore || 78,
     summaryInsight: parsed.summaryInsight,
     unstatedAssumptions: (parsed.unstatedAssumptions || []).map((a: any, i: number) => ({
@@ -160,298 +161,175 @@ Return a pure JSON object (no markdown code fences if possible, or markdown json
   };
 }
 
-export function generateHeuristicReport(input: DecisionInput): BlindSpotReport {
-  // Intelligent reasoning synthesizer
-  const lowerText = `${input.title} ${input.rationale} ${input.context} ${input.hesitations || ''}`.toLowerCase();
+export function generateDynamicReport(input: DecisionInput): BlindSpotReport {
+  // Extract user's contextual terms
+  const title = input.title.trim();
+  const rationaleSnippet = input.rationale.slice(0, 120);
+  const contextSnippet = input.context.slice(0, 120);
+  const hesitationSnippet = input.hesitations?.trim() || '';
 
-  const isInternshipOrAcademic = lowerText.includes('intern') || lowerText.includes('college') || lowerText.includes('stipend') || lowerText.includes('exam') || input.category === 'academic';
+  // Determine key themes
+  const rationaleLower = input.rationale.toLowerCase();
+  const contextLower = input.context.toLowerCase();
 
-  if (isInternshipOrAcademic) {
-    return {
-      id: 'report-' + Date.now(),
-      createdAt: new Date().toISOString(),
-      decisionTitle: input.title,
-      neutralityPledge:
-        'The Blind Spot does not recommend whether to accept or decline. Our mandate is solely to illuminate blind spots, stress-test your premises, and help you reach your own reasoned conviction.',
-      overallBlindspotScore: 84,
-      summaryInsight:
-        'Your visible reasoning anchors heavily on immediate monetary flow and physical convenience, while treating academic attendance policies and mentor availability as unverified best-case scenarios.',
-      unstatedAssumptions: [
-        {
-          id: 'a-1',
-          premise: 'The employer will accommodate exam deadlines, attendance shortages, and coursework without friction.',
-          whyFragile:
-            'Production deliverables take precedence in commercial environments. Unless explicitly specified in a signed agreement, managers prioritize client deliverables.',
-          severity: 'high',
-          verificationStep:
-            'Ask the recruiter to put academic flexibility policies and exam-week remote allowances into writing.',
-        },
-        {
-          id: 'a-2',
-          premise: 'Working 40 hours a week will still leave adequate cognitive energy for 4 university subjects.',
-          whyFragile:
-            'Context switching between workplace sprint backlogs and deep engineering coursework leads to acute cognitive fatigue by week 6.',
-          severity: 'high',
-          verificationStep:
-            'Time-box a 7-day retrospective spreadsheet modeling your exact waking hours, commute, homework, and rest.',
-        },
-        {
-          id: 'a-3',
-          premise: 'This specific firm provides high-value engineering mentorship rather than mundane execution tickets.',
-          whyFragile:
-            'Small or medium local firms often lack structured onboarding programs, using student interns as cost-effective utility workers.',
-          severity: 'medium',
-          verificationStep:
-            'Contact 2 previous interns from this company on LinkedIn and ask about code review quality and senior pairing.',
-        },
-      ],
-      overlookedBlindSpots: [
-        {
-          id: 'b-1',
-          factor: 'Attendance Regulation Blacklist & Backlog Risks',
-          explanation:
-            'Colleges often bar students below mandatory attendance percentages from final university examinations, risking graduation delays.',
-          category: 'Academic',
-        },
-        {
-          id: 'b-2',
-          factor: 'Opportunity Cost of Main Placement Season & Capstone Quality',
-          explanation:
-            'Spending your bandwidth here takes you out of the running for Tier-1 corporate drives or graduating with a distinction-level portfolio project.',
-          category: 'Opportunity Cost',
-        },
-        {
-          id: 'b-3',
-          factor: 'True Net Financial Liquidity After Costs',
-          explanation:
-            'Factoring in food, professional attire, transit fatigue, and potential exam retake fees reduces the perceived net hourly wage significantly.',
-          category: 'Financial',
-        },
-      ],
-      shadowTradeOffs: [
-        {
-          gained: 'Short-term financial cashflow and an immediate sense of professional legitimacy.',
-          sacrificed: 'Academic margin of safety, GPA protection, and cognitive reserves for core foundational learning.',
-          asymmetryScore: 'Asymmetric Risk: Irreversible Transcript Record vs Transient Stipend',
-        },
-        {
-          gained: 'Everyday convenience due to geographic proximity.',
-          sacrificed: 'Targeting higher-trajectory remote or tier-1 internships with higher brand equity.',
-          asymmetryScore: 'Local Optimum vs Global Optimum',
-        },
-      ],
-      dominoEffects: [
-        {
-          horizon: '3-6 Months',
-          visibleExpectation: 'Earn steady stipend, complete internship certification, stay afloat in classes.',
-          shadowRisk:
-            'Attendance deficit notices from department head; forced to negotiate emergency study leaves or sacrifice sleep.',
-        },
-        {
-          horizon: '1-2 Years',
-          visibleExpectation: 'Enter market ahead of peers with real production experience.',
-          shadowRisk:
-            'GPA dip disqualifies you from prestigious recruitment filters or top-tier graduate master’s applications.',
-        },
-        {
-          horizon: '3-5 Years',
-          visibleExpectation: 'Accelerated promotion trajectory.',
-          shadowRisk:
-            'Realizing initial entry wages matter far less than foundational problem-solving depth built during senior college.',
-        },
-      ],
-      detectedBiases: [
-        {
-          name: 'Present Bias (Hyperbolic Discounting)',
-          description:
-            'Over-indexing on tangible rewards received today (monthly stipend) while discounting delayed or compounding assets (higher cumulative GPA and career ceiling).',
-          evidenceFromInput: 'Prominently highlighting stipend and peers calling it foolish to pass up current money.',
-          antidote:
-            'Compute how much an extra 10% in full-time starting salary is worth over 5 years versus 6 months of internship pay.',
-        },
-        {
-          name: 'Proximity Heuristic (WYSIATI)',
-          description:
-            'Allowing geographical convenience (15-minute commute) to artificially inflate the perceived quality of the underlying opportunity.',
-          evidenceFromInput: 'Placing company proximity as a core pillar of evaluation.',
-          antidote:
-            'Ask: "If this company was 60 minutes away, would I still be excited about this exact technical role?"',
-        },
-        {
-          name: 'Optimism Bias on Energy Capacity',
-          description:
-            'Assuming you can maintain 100% capacity across two full-time demanding commitments without performance decay.',
-          evidenceFromInput: 'Treating a 40-hour work week and 4 university courses as co-existable without structural buffers.',
-          antidote:
-            'Assume worst-case scenario: you get sick during finals week. Does the system collapse?',
-        },
-      ],
-      socraticQuestions: [
-        {
-          id: 'q-1',
-          question:
-            'If university administration issues a strict attendance warning denying you final exam tickets, what is your predetermined course of action?',
-          intent:
-            'Forces hard contingency planning for institutional rules that cannot be negotiated away.',
-        },
-        {
-          id: 'q-2',
-          question:
-            'What specific, portfolio-defining skill will you ship here that will make top tech companies hire you 12 months from now?',
-          intent:
-            'Probes whether this is high-leverage technical growth or merely routine low-level maintenance.',
-        },
-        {
-          id: 'q-3',
-          question:
-            'If you were already given this exact stipend as a grant without needing to work, how would you spend those 40 hours each week?',
-          intent:
-            'Separates the financial incentive from your authentic learning priorities.',
-        },
-        {
-          id: 'q-4',
-          question:
-            'Are you prepared to renegotiate this role as a 20-hour part-time position before accepting full-time?',
-          intent:
-            'Tests whether you are falling for false dichotomies (all-or-nothing thinking).',
-        },
-      ],
-    };
-  }
+  const mentionsImmediateGain =
+    rationaleLower.includes('money') ||
+    rationaleLower.includes('stipend') ||
+    rationaleLower.includes('salary') ||
+    rationaleLower.includes('pay') ||
+    rationaleLower.includes('equity') ||
+    rationaleLower.includes('bonus') ||
+    rationaleLower.includes('perk');
 
-  // Generic High-Precision Heuristic for any input
+  const mentionsConvenience =
+    rationaleLower.includes('close') ||
+    rationaleLower.includes('easy') ||
+    rationaleLower.includes('convenient') ||
+    rationaleLower.includes('near') ||
+    rationaleLower.includes('remote') ||
+    contextLower.includes('commute') ||
+    contextLower.includes('close');
+
+  const mentionsOthersOpinion =
+    rationaleLower.includes('friend') ||
+    rationaleLower.includes('people') ||
+    rationaleLower.includes('family') ||
+    rationaleLower.includes('everyone') ||
+    rationaleLower.includes('they say') ||
+    rationaleLower.includes('peers');
+
   return {
     id: 'report-' + Date.now(),
     createdAt: new Date().toISOString(),
-    decisionTitle: input.title,
+    decisionTitle: title,
     neutralityPledge:
-      'The Blind Spot does not recommend whether to accept or decline. Our mandate is solely to illuminate blind spots, stress-test your premises, and help you reach your own reasoned conviction.',
-    overallBlindspotScore: 76,
-    summaryInsight:
-      'Your rationale focuses intensely on high-salience upsides, while under-estimating downstream governance friction, opportunity costs, and unverified assumptions.',
+      'The Blind Spot does not recommend whether to proceed or pivot. Our mandate is solely to illuminate blind spots, stress-test your premises, and help you reach your own reasoned conviction.',
+    overallBlindspotScore: 78,
+    summaryInsight: `Your evaluation is anchored around visible upsides ("${rationaleSnippet}..."), while treating external counterparties' cooperation and your own sustainable bandwidth ("${contextSnippet}...") as guaranteed conditions rather than variable risks.`,
     unstatedAssumptions: [
       {
         id: 'a-1',
-        premise: 'External partners, stakeholders, or organizations will behave cooperatively under non-standard stress.',
-        whyFragile:
-          'In high-stakes trade-offs, counterparties optimize for their own contractual incentives rather than your convenience.',
+        premise: `External stakeholders and constraints will remain flexible enough to accommodate your priorities when schedules collide.`,
+        whyFragile: `In commercial and institutional environments, counterparties prioritize their own operational deliverables, not your personal bandwidth. Unless flexibility is contractually guaranteed, goodwill rarely withstands peak crisis weeks.`,
         severity: 'high',
-        verificationStep:
-          'Audit whether your key assumptions are legally and contractually verified or purely verbal goodwill.',
+        verificationStep: `Before signing or committing, request explicit written clarity on schedule adjustments, contingency policies, and crisis protocols.`,
       },
       {
         id: 'a-2',
-        premise: 'Energy, focus, and cognitive bandwidth will remain constant across multiple overlapping demands.',
-        whyFragile:
-          'Human stamina degrades non-linearly when cognitive load exceeds sustainable thresholds.',
-        severity: 'medium',
-        verificationStep:
-          'Stress-test your worst-case weekly schedule with buffer blocks for recovery and emergencies.',
+        premise: `Your cognitive bandwidth and physical endurance will sustain the full combined load without diminishing the quality of your existing commitments.`,
+        whyFragile: `Human performance does not degrade linearly—when cognitive saturation is reached, output quality collapses abruptly across multiple commitments simultaneously.`,
+        severity: 'high',
+        verificationStep: `Construct a 7-day realistic hourly schedule mapping sleep, transit, deep work, and emergency buffers to test if slack exists.`,
       },
       {
         id: 'a-3',
-        premise: 'The perceived visible benefits cannot be achieved through alternative, lower-risk avenues.',
-        whyFragile:
-          'Binary framing often blinds us to intermediate compromises (part-time, delayed starts, or hybrid models).',
+        premise: `The visible perks of this choice cannot be obtained through alternative, lower-friction avenues with less downside exposure.`,
+        whyFragile: `Binary decision framing ("should I do this or not?") creates artificial scarcity, blinding decision-makers to third alternatives (e.g., phased entry, part-time trial, or deferred start).`,
         severity: 'medium',
-        verificationStep:
-          'Explore at least two synthetic alternatives that capture 80% of the upside with half the downside.',
+        verificationStep: `Force yourself to outline two alternative paths that capture 75% of the primary upside while eliminating 50% of the downside risk.`,
       },
     ],
     overlookedBlindSpots: [
       {
         id: 'b-1',
-        factor: 'Downstream Reversibility (Type 1 vs Type 2 Decisions)',
-        explanation:
-          'If this decision proves suboptimal after 90 days, what is the exact economic and reputational cost of reversing course?',
+        factor: 'Type 1 vs Type 2 Reversibility & Exit Costs',
+        explanation: `If this path proves unsustainable after 60 to 90 days, what is the precise reputational, financial, or institutional penalty required to withdraw?`,
         category: 'Opportunity Cost',
       },
       {
         id: 'b-2',
-        factor: 'Hidden Second-Order Maintenance Overhead',
-        explanation:
-          'New commitments introduce ongoing administrative, logistical, and relational drag that was omitted in the initial calculation.',
+        factor: 'Hidden Second-Order Operational Overhead',
+        explanation: `Every new commitment carries invisible logistical drag—administrative overhead, context switching, and relational maintenance—that was omitted from your visible calculation.`,
         category: 'Health/Social',
       },
       {
         id: 'b-3',
-        factor: 'The Unseen Alternative Cost',
-        explanation:
-          'What doors permanently close or become inaccessible the moment you commit your scarce time and attention here?',
+        factor: 'The Structural Shadow Cost (Doors Permanently Closed)',
+        explanation: `Committing scarce time and energy here automatically forecloses other concurrent opportunities that may emerge during this exact timeframe.`,
         category: 'Career Trajectory',
       },
     ],
     shadowTradeOffs: [
       {
-        gained: 'High immediate salience, tangible perks, and near-term progress markers.',
-        sacrificed: 'Optionality, buffer capacity, and freedom to capitalize on unexpected superior opportunities.',
-        asymmetryScore: 'Certain Near-Term Burden vs Speculative Upside',
+        gained: `Immediate visible milestones and stated perks: "${rationaleSnippet.slice(0, 80)}..."`,
+        sacrificed: `Downstream flexibility, cognitive slack, and reserves for unexpected systemic emergencies.`,
+        asymmetryScore: 'Asymmetric Exposure: Immediate Salience vs Long-Term Risk',
       },
       {
-        gained: 'Validation from peers or visible milestones.',
-        sacrificed: 'Autonomy and deep sustained focus on personal long-term foundational pillars.',
-        asymmetryScore: 'External Status vs Internal Coherence',
+        gained: `Validation of moving forward and near-term progress markers.`,
+        sacrificed: `Optionality to pivot if higher-leverage opportunities arise unexpectedly.`,
+        asymmetryScore: 'Local Optimization vs Global Strategy',
       },
     ],
     dominoEffects: [
       {
         horizon: '3-6 Months',
-        visibleExpectation: 'Smooth execution of initial plan with excitement and visible traction.',
-        shadowRisk: 'Accumulating operational friction and unexpected time-sink bottlenecks.',
+        visibleExpectation: `Smooth execution of your initial plan with high motivation and visible initial progress.`,
+        shadowRisk: `Accumulation of schedule friction; competing deadlines force emergency trade-offs and sleep deprivation.`,
       },
       {
         horizon: '1-2 Years',
-        visibleExpectation: 'Validation of early conviction and expanded professional standing.',
-        shadowRisk: 'Realizing that foundational trade-offs limited subsequent pivot capacity.',
+        visibleExpectation: `Leveraging this experience or choice as a stepping stone to higher advancement.`,
+        shadowRisk: `Secondary impacts (degraded performance in core commitments or burned relationships) limit subsequent mobility.`,
       },
       {
         horizon: '3-5 Years',
-        visibleExpectation: 'Compounded long-term advantage.',
-        shadowRisk: 'Path dependency locking you into a trajectory you did not deliberately choose.',
+        visibleExpectation: `Compounded seniority and strategic advantage from taking the initiative early.`,
+        shadowRisk: `Path dependency sets in—finding yourself locked onto a trajectory selected for short-term perks rather than fundamental conviction.`,
       },
     ],
     detectedBiases: [
       {
-        name: 'Salience Bias (WYSIATI - What You See Is All There Is)',
-        description:
-          'Focusing exclusively on the vivid, measurable, or easily articulated aspects of the choice while ignoring subtle structural factors.',
-        evidenceFromInput: 'Evaluating the choice primarily through the narrow lens of stated immediate rationale.',
-        antidote:
-          'Deliberately write down 5 things you know nothing about regarding this opportunity and audit them.',
+        name: mentionsImmediateGain ? 'Present Bias (Hyperbolic Discounting)' : 'Salience Bias (WYSIATI)',
+        description: mentionsImmediateGain
+          ? 'Over-weighting immediate, tangible perks over compounding long-term capital and systemic well-being.'
+          : 'Focusing exclusively on the vivid, easily articulated attributes while treating unmentioned variables as non-existent.',
+        evidenceFromInput: `Rationale centers around: "${rationaleSnippet.slice(0, 90)}..."`,
+        antidote: `Project forward 36 months: if the immediate perks were removed, would the intrinsic strategic value alone justify this commitment?`,
       },
       {
-        name: 'Commitment & Consistency Trap',
-        description:
-          'The urge to justify an already emotionally favored option by post-rationalizing its advantages.',
-        evidenceFromInput: 'Focusing on reasons to move forward while treating hesitations as secondary.',
-        antidote:
-          'Conduct a prospective "Pre-Mortem": Assume it failed disastrously 1 year from now. Write down why.',
+        name: mentionsConvenience ? 'Proximity / Friction Heuristic' : 'Commitment Bias',
+        description: mentionsConvenience
+          ? 'Allowing ease of access or physical convenience to artificially inflate the perceived quality of an opportunity.'
+          : 'The psychological inclination to justify an option you already feel emotionally drawn to by rationalizing its benefits.',
+        evidenceFromInput: `Context notes: "${contextSnippet.slice(0, 90)}..."`,
+        antidote: `Assume this opportunity required 3x the logistical friction. Would your conviction in its core value still hold?`,
       },
+      ...(mentionsOthersOpinion
+        ? [
+            {
+              name: 'Social Conformity (Herding Effect)',
+              description:
+                'Subconsciously adopting the opinions of peers or external observers without auditing whether their risk tolerance matches your reality.',
+              evidenceFromInput: `Citing external opinions: "${rationaleSnippet.slice(0, 80)}..."`,
+              antidote:
+                'Remember that external advisors do not bear the consequences if this commitment overburdens your capacity.',
+            },
+          ]
+        : []),
     ],
     socraticQuestions: [
       {
         id: 'q-1',
-        question:
-          'If you knew with 100% certainty that the primary benefit you are chasing would be delayed by 18 months, would you still make this choice today?',
-        intent: 'Exposes how dependent your reasoning is on immediate gratification.',
-      },
-      {
-        id: 'q-2',
-        question:
-          'What is the unstated condition that, if false, makes this entire decision an undeniable mistake?',
+        question: `What is the single unstated premise in your reasoning that, if proven false tomorrow, turns this choice into a clear mistake?`,
         intent: 'Identifies the single point of failure in your logical chain.',
       },
       {
+        id: 'q-2',
+        question: `If you were required to reverse this decision 90 days after starting, what exact consequences (financial, academic, reputational) would you face?`,
+        intent: 'Forces rigorous auditing of exit costs and reversibility (Type 1 vs Type 2 decisions).',
+      },
+      {
         id: 'q-3',
-        question:
-          'Who in your life bears the negative spillover effects if this decision overwhelms your capacity?',
-        intent: 'Uncovers externalized costs passed onto family, teammates, or personal health.',
+        question: hesitationSnippet
+          ? `You noted this quiet hesitation: "${hesitationSnippet}". If that exact doubt materialized at 3x the intensity during week 6, what is your predetermined protocol?`
+          : `If an unexpected crisis cuts your available weekly time by 30%, which commitment is the first you are forced to compromise?`,
+        intent: 'Converts quiet intuitive hesitations into concrete scenario-stress tests.',
       },
       {
         id: 'q-4',
-        question:
-          'What would someone who cares deeply about your long-term success but has zero emotional investment in this specific offer advise you to examine first?',
-        intent: 'Induces psychological distance to neutralize emotional attachment.',
+        question: `If an independent auditor who cares only about your 5-year trajectory reviewed this choice, what question would they ask that you are currently avoiding?`,
+        intent: 'Induces psychological distance to overcome immediate emotional attachment.',
       },
     ],
   };
@@ -499,10 +377,11 @@ Instead, act as a Socratic sparring mirror:
         if (text) return text.trim();
       }
     } catch (e) {
-      console.warn('Sparring API failed, fallback to local reflection', e);
+      console.warn('Sparring API failed, fallback to dynamic reflection', e);
     }
   }
 
-  // Heuristic Socratic Sparring reflection
-  return `You note that you would handle this by relying on adaptive flexibility and prioritizing as needed. However, notice that this introduces a new assumption: that external counterparties will accommodate your shifting priorities when deadlines collide. What happens if both commitments demand your presence on the exact same morning without compromise? Have you tested their tolerance in advance, or are you deferring that confrontation to a moment of crisis?`;
+  // Dynamic Socratic Sparring reflection
+  const answerSnippet = userAnswer.slice(0, 90);
+  return `You argue that "${answerSnippet}..." will provide adequate protection. Notice, however, that this defense introduces a new unverified dependency: it assumes external parties will negotiate in good faith when deadlines collide under pressure. Have you audited whether this contingency is formal and binding, or are you deferring that confrontation to a moment of high stress?`;
 }
